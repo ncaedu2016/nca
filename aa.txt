@@ -1,0 +1,70 @@
+Imports System.Data.OleDb
+Public Class Form1
+    Dim active As Integer
+    Dim deactive As Integer
+    Dim di As Integer
+    Dim n As String
+    Dim myCom As OleDbConnection
+    Dim myCmd As OleDbCommand
+    Dim dr As OleDbDataReader
+    Dim da As OleDbDataAdapter
+    Dim dt As New DataTable
+    Dim sql As String
+
+    Private Sub btnSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnSave.Click
+        myCom = New OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Testing\WindowsApplication5\WindowsApplication5\db1.mdb")
+        myCom.Open()
+        Grid.DataSource = Nothing
+        Grid.Rows.Clear()
+        Grid.Columns.Clear()
+        Grid.Refresh()
+        If rdoActive.Checked = True Then
+            active = 0
+            sql = "Insert into Test (Different,Name) values ('" & active & "','" & txtName.Text & "')"
+            myCmd = New OleDbCommand(sql, myCom)
+            myCmd.ExecuteNonQuery()
+
+        End If
+        If rdoDeactive.Checked = True Then
+            deactive = 1
+            sql = "Insert into Test (Different,Name) values ('" & deactive & "','" & txtName.Text & "')"
+            myCmd = New OleDbCommand(sql, myCom)
+            myCmd.ExecuteNonQuery()
+        End If
+     
+
+        Grid.Refresh()
+        Grid.ColumnCount = 2
+        Grid.Columns(0).Name = "Different"
+        Grid.Columns(1).Name = "Name"
+     
+       
+        sql = "select Different,Name from Test"
+        myCmd = New OleDbCommand(sql, myCom)
+        dr = myCmd.ExecuteReader
+        While dr.Read()
+            di = dr("Different")
+            n = dr("Name")
+            If di = 0 Then
+                Dim row As String() = New String() {"Active", n}
+                Grid.Rows.Add(row)
+            End If
+            If di = 1 Then
+
+                Dim row As String() = New String() {"DeActive", n}
+                Grid.Rows.Add(row)
+            End If
+        End While
+
+     
+
+    End Sub
+
+  
+    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Grid.DataSource = Nothing
+        Grid.Rows.Clear()
+        Grid.Columns.Clear()
+        Grid.Refresh()
+    End Sub
+End Class
